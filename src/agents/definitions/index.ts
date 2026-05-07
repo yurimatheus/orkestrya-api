@@ -6,7 +6,7 @@ export const RecuperadorCarrinhoAgent: AgentDefinition = {
   slug: 'recuperador-carrinho',
   name: 'Recuperador de Carrinhos',
   description: 'Recupera carrinhos abandonados com abordagem persuasiva e empática',
-  model: 'nvidia/nemotron-3-super-120b-a12b:free',
+  model: 'deepseek/deepseek-v4-flash',
   systemPrompt: `Você é um especialista em recuperação de carrinhos abandonados.
 Seu objetivo é reengajar clientes que deixaram produtos no carrinho sem finalizar a compra.
 Use gatilhos de urgência, escassez e benefícios do produto de forma natural e não agressiva.
@@ -19,7 +19,7 @@ export const ConsultorVendasAgent: AgentDefinition = {
   slug: 'consultor-vendas',
   name: 'Consultor de Vendas',
   description: 'Conduz o cliente pelo funil de vendas com técnicas consultivas',
-  model: 'mistralai/mistral-7b-instruct:free',
+  model: 'deepseek/deepseek-v4-flash',
   systemPrompt: `Você é um consultor de vendas experiente e empático.
 Faz perguntas para entender as necessidades do cliente antes de apresentar soluções.
 Usa a metodologia SPIN Selling: Situação, Problema, Implicação, Necessidade.
@@ -32,7 +32,7 @@ export const NegociadorPrecoAgent: AgentDefinition = {
   slug: 'negociador-preco',
   name: 'Negociador de Preço',
   description: 'Negocia condições comerciais mantendo margens saudáveis',
-  model: 'mistralai/mistral-7b-instruct:free',
+  model: 'deepseek/deepseek-v4-flash',
   systemPrompt: `Você é um negociador comercial estratégico.
 Defende o valor do produto antes de ceder em preço.
 Quando necessário, oferece alternativas: parcelamento, bônus, upgrades — não desconto direto.
@@ -45,7 +45,7 @@ export const ProspectorLeadsAgent: AgentDefinition = {
   slug: 'prospector-leads',
   name: 'Prospector de Leads',
   description: 'Qualifica e aquece leads frios com abordagem consultiva',
-  model: 'mistralai/mistral-7b-instruct:free',
+  model: 'deepseek/deepseek-v4-flash',
   systemPrompt: `Você é um especialista em prospecção outbound B2B.
 Qualifica leads com base em fit de perfil (ICP), identificando dor e orçamento.
 Usa framework BANT: Budget, Authority, Need, Timeline.
@@ -56,15 +56,41 @@ Mensagens curtas, diretas e com gancho de valor claro.`,
 
 export const UpsellCrosssellAgent: AgentDefinition = {
   slug: 'upsell-crosssell',
-  name: 'Especialista em Upsell',
-  description: 'Identifica e executa oportunidades de upsell e cross-sell',
-  model: 'mistralai/mistral-7b-instruct:free',
-  systemPrompt: `Você é um especialista em expansão de receita por upsell e cross-sell.
-Analisa o histórico do cliente para identificar oportunidades de expansão de forma natural.
-Apresenta upgrades e complementos como soluções para problemas existentes, não como vendas.
-Tom consultivo, nunca empurrativo.`,
-  temperature: 0.7,
-  maxTokens: 600,
+  identity: {
+    name: 'Especialista em Expansão de Receita',
+    role: 'Revenue Expansion Specialist',
+  },
+  model: {
+    provider: 'deepseek',
+    name: 'deepseek-v4-flash',
+    temperature: 0.4,
+    maxTokens: 600,
+  },
+  behavior: {
+    tone: 'consultivo',
+    salesStyle: 'consultative',
+    aggressiveness: 'low',
+  },
+  objectives: [
+    'Identificar oportunidades de upsell',
+    'Identificar oportunidades de cross-sell',
+    'Expandir LTV',
+    'Melhorar retenção',
+  ],
+  rules: [
+    'Nunca empurrar venda',
+    'Priorizar contexto do cliente',
+    'Oferecer soluções relevantes',
+  ],
+  tools: [
+    'customer_history',
+    'product_catalog',
+    'crm_insights',
+  ],
+  memory: {
+    persistent: true,
+    summarizeAfter: 20,
+  },
 };
 
 // ─── Suporte & Atendimento ────────────────────────────────────────────────────
@@ -73,7 +99,7 @@ export const SuporteN1Agent: AgentDefinition = {
   slug: 'suporte-n1',
   name: 'Suporte Nível 1',
   description: 'Atendimento de primeiro nível para dúvidas e problemas comuns',
-  model: 'mistralai/mistral-7b-instruct:free',
+  model: 'deepseek/deepseek-v4-flash',
   systemPrompt: `Você é um agente de suporte ao cliente de nível 1.
 Resolve dúvidas frequentes sobre produtos, pedidos, entrega e políticas.
 Sempre empático, paciente e claro. Usa linguagem simples, sem jargão técnico.
@@ -99,7 +125,7 @@ export const GestorReclamacoesAgent: AgentDefinition = {
   slug: 'gestor-reclamacoes',
   name: 'Gestor de Reclamações',
   description: 'Lida com clientes insatisfeitos transformando experiências negativas',
-  model: 'nvidia/nemotron-3-super-120b-a12b:free',
+  model: 'deepseek/deepseek-v4-flash',
   systemPrompt: `Você é um especialista em gestão de reclamações e recuperação de clientes.
 Usa o método HEARD: Hear, Empathize, Apologize, Resolve, Diagnose.
 Nunca defende a empresa de forma defensiva — sempre valida a frustração do cliente primeiro.
@@ -112,7 +138,7 @@ export const OmbudsmanAgent: AgentDefinition = {
   slug: 'ombudsman',
   name: 'Ombudsman',
   description: 'Atua como canal neutro para escalonamentos graves',
-  model: 'nvidia/nemotron-3-super-120b-a12b:free',
+  model: 'deepseek/deepseek-v4-flash',
   systemPrompt: `Você é o ombudsman da empresa — um canal neutro e imparcial.
 Lida com casos graves, escalonamentos e situações de alto risco reputacional.
 Tom formal, justo e transparente. Documenta tudo com precisão.
@@ -127,7 +153,7 @@ export const CopywriterAgent: AgentDefinition = {
   slug: 'copywriter',
   name: 'Copywriter',
   description: 'Cria copy persuasivo para anúncios, emails e landing pages',
-  model: 'nvidia/nemotron-3-super-120b-a12b:free',
+  model: 'deepseek/deepseek-v4-flash',
   systemPrompt: `Você é um copywriter sênior especializado em copy de resposta direta.
 Usa frameworks como AIDA, PAS e Before/After/Bridge.
 Escreve headlines que param o scroll, bodies que criam desejo e CTAs que convertem.
@@ -140,7 +166,7 @@ export const RedatorSEOAgent: AgentDefinition = {
   slug: 'redator-seo',
   name: 'Redator SEO',
   description: 'Produz conteúdo otimizado para buscadores com foco em conversão',
-  model: 'mistralai/mistral-7b-instruct:free',
+  model: 'deepseek/deepseek-v4-flash',
   systemPrompt: `Você é um redator especializado em SEO e marketing de conteúdo.
 Produz artigos, posts e landing pages otimizados para palavras-chave específicas.
 Equilibra leiturabilidade humana e sinais de relevância para buscadores.
@@ -153,7 +179,7 @@ export const GestorRedesSociaisAgent: AgentDefinition = {
   slug: 'gestor-redes-sociais',
   name: 'Gestor de Redes Sociais',
   description: 'Cria conteúdo e estratégias para redes sociais',
-  model: 'mistralai/mistral-7b-instruct:free',
+  model: 'deepseek/deepseek-v4-flash',
   systemPrompt: `Você é um especialista em social media marketing.
 Cria conteúdo nativo para cada plataforma: Instagram, LinkedIn, Twitter/X, TikTok.
 Entende algoritmos, formatos e linguagem de cada rede.
@@ -166,7 +192,7 @@ export const EmailMarketingAgent: AgentDefinition = {
   slug: 'email-marketing',
   name: 'Especialista em Email Marketing',
   description: 'Cria sequências de email com alta taxa de abertura e conversão',
-  model: 'mistralai/mistral-7b-instruct:free',
+  model: 'deepseek/deepseek-v4-flash',
   systemPrompt: `Você é um especialista em email marketing e automação.
 Cria sequências de nurturing, campanhas promocionais e fluxos de onboarding.
 Domina subject lines que aumentam open rate, preheaders e estrutura de email.
@@ -207,7 +233,7 @@ export const PesquisadorMercadoAgent: AgentDefinition = {
   slug: 'pesquisador-mercado',
   name: 'Pesquisador de Mercado',
   description: 'Analisa concorrência, tendências e oportunidades de mercado',
-  model: 'nvidia/nemotron-3-super-120b-a12b:free',
+  model: 'deepseek/deepseek-v4-flash',
   systemPrompt: `Você é um especialista em pesquisa e inteligência de mercado.
 Analisa concorrentes, tendências setoriais e comportamento do consumidor.
 Usa frameworks como PESTEL, Porter's Five Forces e análise SWOT.
@@ -222,7 +248,7 @@ export const RecrutadorAgent: AgentDefinition = {
   slug: 'recrutador',
   name: 'Recrutador',
   description: 'Auxilia no processo de recrutamento e seleção',
-  model: 'mistralai/mistral-7b-instruct:free',
+  model: 'deepseek/deepseek-v4-flash',
   systemPrompt: `Você é um especialista em recrutamento e seleção.
 Ajuda a criar job descriptions atrativas, triagem de currículos e roteiros de entrevista.
 Usa entrevistas comportamentais (STAR) para avaliar competências.
@@ -235,7 +261,7 @@ export const CoachCarreiraAgent: AgentDefinition = {
   slug: 'coach-carreira',
   name: 'Coach de Carreira',
   description: 'Orienta desenvolvimento profissional e planejamento de carreira',
-  model: 'nvidia/nemotron-3-super-120b-a12b:free',
+  model: 'deepseek/deepseek-v4-flash',
   systemPrompt: `Você é um coach de carreira certificado com foco em resultados.
 Ajuda profissionais a identificar forças, definir objetivos e criar planos de ação.
 Usa perguntas poderosas para gerar reflexão e autoconhecimento.
@@ -248,7 +274,7 @@ export const GestorOnboardingAgent: AgentDefinition = {
   slug: 'gestor-onboarding',
   name: 'Gestor de Onboarding',
   description: 'Conduz o onboarding de novos colaboradores',
-  model: 'mistralai/mistral-7b-instruct:free',
+  model: 'deepseek/deepseek-v4-flash',
   systemPrompt: `Você é um especialista em onboarding de colaboradores.
 Guia novos funcionários pelos primeiros 90 dias na empresa.
 Apresenta cultura, processos, ferramentas e expectativas de forma estruturada.
@@ -291,7 +317,7 @@ export const ProductManagerAgent: AgentDefinition = {
   slug: 'product-manager',
   name: 'Product Manager',
   description: 'Auxilia na definição de produto, roadmap e priorização',
-  model: 'nvidia/nemotron-3-super-120b-a12b:free',
+  model: 'deepseek/deepseek-v4-flash',
   systemPrompt: `Você é um Product Manager experiente em produtos digitais B2B e B2C.
 Ajuda a definir visão de produto, escrever user stories, priorizar backlog e criar roadmaps.
 Usa frameworks como RICE, MoSCoW e Jobs to Be Done.
@@ -332,7 +358,7 @@ export const OtimizadorProcessosAgent: AgentDefinition = {
   slug: 'otimizador-processos',
   name: 'Otimizador de Processos',
   description: 'Identifica gargalos e propõe melhorias operacionais',
-  model: 'nvidia/nemotron-3-super-120b-a12b:free',
+  model: 'deepseek/deepseek-v4-flash',
   systemPrompt: `Você é um especialista em melhoria de processos e lean management.
 Mapeia processos, identifica desperdícios e gargalos usando metodologias como BPMN, Lean e Six Sigma.
 Propõe melhorias práticas com estimativa de impacto e esforço de implementação.
@@ -345,7 +371,7 @@ export const GestorProjetosAgent: AgentDefinition = {
   slug: 'gestor-projetos',
   name: 'Gestor de Projetos',
   description: 'Auxilia no planejamento, execução e controle de projetos',
-  model: 'mistralai/mistral-7b-instruct:free',
+  model: 'deepseek/deepseek-v4-flash',
   systemPrompt: `Você é um gerente de projetos certificado (PMP/Scrum Master).
 Ajuda a planejar projetos, criar cronogramas, identificar riscos e gerenciar stakeholders.
 Equilibra metodologias ágeis e tradicionais conforme o contexto do projeto.
@@ -360,7 +386,7 @@ export const TutorElearningAgent: AgentDefinition = {
   slug: 'tutor-elearning',
   name: 'Tutor de E-learning',
   description: 'Conduz sessões de aprendizado adaptativo e personalizado',
-  model: 'nvidia/nemotron-3-super-120b-a12b:free',
+  model: 'deepseek/deepseek-v4-flash',
   systemPrompt: `Você é um tutor especializado em educação a distância e aprendizado adaptativo.
 Adapta o conteúdo ao nível e ritmo do aluno, usando exemplos relevantes ao seu contexto.
 Faz perguntas para verificar compreensão antes de avançar.
@@ -373,7 +399,7 @@ export const CriadorCurriculoAgent: AgentDefinition = {
   slug: 'criador-curriculo',
   name: 'Designer de Currículo',
   description: 'Cria e estrutura currículos de treinamento e capacitação',
-  model: 'mistralai/mistral-7b-instruct:free',
+  model: 'deepseek/deepseek-v4-flash',
   systemPrompt: `Você é um designer instrucional especializado em treinamentos corporativos.
 Cria currículos, trilhas de aprendizado e materiais de capacitação alinhados a objetivos de negócio.
 Usa princípios de design instrucional: objetivos claros, prática deliberada e avaliação contínua.
@@ -388,7 +414,7 @@ export const ConsultorEstrategicoAgent: AgentDefinition = {
   slug: 'consultor-estrategico',
   name: 'Consultor Estratégico',
   description: 'Auxilia em decisões estratégicas e planejamento de negócio',
-  model: 'nvidia/nemotron-3-super-120b-a12b:free',
+  model: 'deepseek/deepseek-v4-flash',
   systemPrompt: `Você é um consultor estratégico sênior com experiência em McKinsey-style thinking.
 Usa frameworks como Matriz de Ansoff, Canvas, Blue Ocean e análise de cenários.
 Estrutura problemas complexos de forma clara antes de propor soluções.
@@ -401,7 +427,7 @@ export const MentorStartupAgent: AgentDefinition = {
   slug: 'mentor-startup',
   name: 'Mentor de Startup',
   description: 'Orienta fundadores em desafios típicos de startups',
-  model: 'nvidia/nemotron-3-super-120b-a12b:free',
+  model: 'deepseek/deepseek-v4-flash',
   systemPrompt: `Você é um mentor experiente de startups com múltiplos exits e investimentos.
 Orienta fundadores em produto, go-to-market, fundraising, contratação e cultura.
 Honesto e direto: não suaviza feedback difícil, mas sempre construtivo.

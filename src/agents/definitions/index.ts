@@ -16,7 +16,7 @@ export const RecuperadorCarrinhoAgent: AgentDefinition = {
   },
   behavior: {
     tone: 'persuasivo',
-    salesStyle: 'recovery',
+    salesStyle: 'informative',
     aggressiveness: 'medium',
   },
   objectives: [
@@ -55,7 +55,7 @@ export const ConsultorVendasAgent: AgentDefinition = {
   },
   behavior: {
     tone: 'consultivo',
-    salesStyle: 'spin-selling',
+    salesStyle: 'aggressive',
     aggressiveness: 'low',
   },
   objectives: [
@@ -94,7 +94,7 @@ export const NegociadorPrecoAgent: AgentDefinition = {
   },
   behavior: {
     tone: 'estrategico',
-    salesStyle: 'value-based',
+    salesStyle: 'insight-driven',
     aggressiveness: 'low',
   },
   objectives: [
@@ -133,7 +133,7 @@ export const ProspectorLeadsAgent: AgentDefinition = {
   },
   behavior: {
     tone: 'consultivo',
-    salesStyle: 'outbound',
+    salesStyle: 'consultative',
     aggressiveness: 'medium',
   },
   objectives: [
@@ -213,7 +213,7 @@ export const SuporteN1Agent: AgentDefinition = {
   },
   behavior: {
     tone: 'empatico',
-    salesStyle: 'supportive',
+    salesStyle: 'consultative',
     aggressiveness: 'low',
   },
   objectives: [
@@ -252,7 +252,7 @@ export const SuporteTecnicoAgent: AgentDefinition = {
   },
   behavior: {
     tone: 'tecnico',
-    salesStyle: 'diagnostic',
+    salesStyle: 'consultative',
     aggressiveness: 'low',
   },
   objectives: [
@@ -291,7 +291,7 @@ export const GestorReclamacoesAgent: AgentDefinition = {
   },
   behavior: {
     tone: 'empatico',
-    salesStyle: 'retention',
+    salesStyle: 'informative',
     aggressiveness: 'low',
   },
   objectives: [
@@ -371,7 +371,7 @@ export const CopywriterAgent: AgentDefinition = {
   },
   behavior: {
     tone: 'persuasivo',
-    salesStyle: 'direct-response',
+    salesStyle: 'aggressive',
     aggressiveness: 'medium',
   },
   objectives: [
@@ -410,7 +410,7 @@ export const RedatorSEOAgent: AgentDefinition = {
   },
   behavior: {
     tone: 'estrategico',
-    salesStyle: 'content-marketing',
+    salesStyle: 'informative',
     aggressiveness: 'low',
   },
   objectives: [
@@ -449,7 +449,7 @@ export const GestorRedesSociaisAgent: AgentDefinition = {
   },
   behavior: {
     tone: 'criativo',
-    salesStyle: 'social-engagement',
+    salesStyle: 'consultative',
     aggressiveness: 'medium',
   },
   objectives: [
@@ -488,7 +488,7 @@ export const EmailMarketingAgent: AgentDefinition = {
   },
   behavior: {
     tone: 'persuasivo',
-    salesStyle: 'nurturing',
+    salesStyle: 'aggressive',
     aggressiveness: 'medium',
   },
   objectives: [
@@ -607,7 +607,7 @@ export const PesquisadorMercadoAgent: AgentDefinition = {
   },
   behavior: {
     tone: 'estrategico',
-    salesStyle: 'research-driven',
+    salesStyle: 'insight-driven',
     aggressiveness: 'low',
   },
   objectives: [
@@ -648,7 +648,7 @@ export const RecrutadorAgent: AgentDefinition = {
   },
   behavior: {
     tone: 'profissional',
-    salesStyle: 'talent-acquisition',
+    salesStyle: 'consultative',
     aggressiveness: 'low',
   },
   objectives: [
@@ -687,7 +687,7 @@ export const CoachCarreiraAgent: AgentDefinition = {
   },
   behavior: {
     tone: 'motivador',
-    salesStyle: 'coaching',
+    salesStyle: 'advisory',
     aggressiveness: 'low',
   },
   objectives: [
@@ -726,7 +726,7 @@ export const GestorOnboardingAgent: AgentDefinition = {
   },
   behavior: {
     tone: 'acolhedor',
-    salesStyle: 'guidance',
+    salesStyle: 'informative',
     aggressiveness: 'low',
   },
   objectives: [
@@ -806,7 +806,7 @@ export const ComplianceAgent: AgentDefinition = {
   },
   behavior: {
     tone: 'tecnico',
-    salesStyle: 'risk-management',
+    salesStyle: 'advisory',
     aggressiveness: 'low',
   },
   objectives: [
@@ -847,7 +847,7 @@ export const ProductManagerAgent: AgentDefinition = {
   },
   behavior: {
     tone: 'estrategico',
-    salesStyle: 'product-led',
+    salesStyle: 'aggressive',
     aggressiveness: 'low',
   },
   objectives: [
@@ -886,7 +886,7 @@ export const ArquitetoSistemasAgent: AgentDefinition = {
   },
   behavior: {
     tone: 'tecnico',
-    salesStyle: 'architectural-advisory',
+    salesStyle: 'consultative',
     aggressiveness: 'low',
   },
   objectives: [
@@ -925,7 +925,7 @@ export const CodeReviewerAgent: AgentDefinition = {
   },
   behavior: {
     tone: 'tecnico',
-    salesStyle: 'engineering-review',
+    salesStyle: 'consultative',
     aggressiveness: 'low',
   },
   objectives: [
@@ -966,7 +966,7 @@ export const OtimizadorProcessosAgent: AgentDefinition = {
   },
   behavior: {
     tone: 'analitico',
-    salesStyle: 'operational-efficiency',
+    salesStyle: 'aggressive',
     aggressiveness: 'low',
   },
   objectives: [
@@ -1005,7 +1005,7 @@ export const GestorProjetosAgent: AgentDefinition = {
   },
   behavior: {
     tone: 'organizado',
-    salesStyle: 'project-governance',
+    salesStyle: 'consultative',
     aggressiveness: 'low',
   },
   objectives: [
@@ -1046,7 +1046,7 @@ export const TutorElearningAgent: AgentDefinition = {
   },
   behavior: {
     tone: 'didatico',
-    salesStyle: 'educational-guidance',
+    salesStyle: 'consultative',
     aggressiveness: 'low',
   },
   objectives: [
@@ -1085,7 +1085,7 @@ export const CriadorCurriculoAgent: AgentDefinition = {
   },
   behavior: {
     tone: 'didatico',
-    salesStyle: 'training-design',
+    salesStyle: 'informative',
     aggressiveness: 'low',
   },
   objectives: [
@@ -1126,7 +1126,7 @@ export const ConsultorEstrategicoAgent: AgentDefinition = {
   },
   behavior: {
     tone: 'estrategico',
-    salesStyle: 'executive-advisory',
+    salesStyle: 'aggressive',
     aggressiveness: 'low',
   },
   objectives: [

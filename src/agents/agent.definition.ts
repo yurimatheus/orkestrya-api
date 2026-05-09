@@ -17,7 +17,7 @@ export interface AgentDefinition {
   behavior?: {
     tone?: string;
     style?: string;
-    salesStyle?: 'consultative' | 'aggressive' | 'informative';
+    salesStyle?: 'consultative' | 'aggressive' | 'informative' | 'advisory' | 'insight-driven' | 'neutral';
     aggressiveness?: 'low' | 'medium' | 'high';
   };
 

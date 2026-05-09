@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { FastifyReply } from '@nestjs/platform-fastify';
+import { FastifyReply } from 'fastify';
 import OpenAI from 'openai';
 import { AgentsService } from '../agents/agents.service';
 
@@ -20,15 +20,15 @@ export class ChatService {
     res.header('Connection', 'keep-alive');
     res.header('Access-Control-Allow-Origin', '*');
 
-    const send = (data: object) => res.write(`data: ${JSON.stringify(data)}\n\n`);
+    const send = (data: object) => res.raw.write(`data: ${JSON.stringify(data)}\n\n`);
 
     try {
       const stream = await this.client.chat.completions.create({
-        model: agent.model,
-        temperature: agent.temperature ?? 0.7,
-        max_tokens: agent.maxTokens ?? 1000,
+        model: agent.model.provider === 'openai' ? `gpt-${agent.model.name}` : agent.model.name,
+        temperature: agent.model.temperature ?? 0.7,
+        max_tokens: agent.model.maxTokens ?? 1000,
         messages: [
-          { role: 'system', content: agent.systemPrompt },
+          { role: 'system', content: agent.prompts?.system || 'You are a helpful assistant.' },
           { role: 'user', content: message },
         ],
         stream: true,
@@ -39,11 +39,12 @@ export class ChatService {
         if (token) send({ type: 'token', content: token });
       }
 
-      send({ type: 'done', agent: agent.name, model: agent.model });
+      send({ type: 'done', agent: agent.identity.name, model: agent.model });
     } catch (error) {
-      send({ type: 'error', content: error.message });
+      const message = error instanceof Error ? error.message : 'An error occurred while processing the message.';
+      send({ type: 'error', content: message });
     } finally {
-      res.end();
+      send({ type: 'end' });
     }
   }
 }

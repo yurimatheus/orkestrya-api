@@ -22,8 +22,8 @@
   "dependencies": {
     "@nestjs/common": "^11.0.1",
     "@nestjs/core": "^11.0.1",
-    "@nestjs/devtools-integration": "^0.2.1",
     "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/platform-fastify": "^11.1.19",
     "dotenv": "^17.4.2",
     "ioredis": "^5.10.1",
     "openai": "^6.36.0",

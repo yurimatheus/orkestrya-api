@@ -96,3 +96,100 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
+---
+
+## Tools Registry from Orkestrya
+
+// SALES
+'customer_history',
+'product_catalog',
+'crm_insights',
+'cart_data',
+'pricing_rules',
+'lead_database',
+'company_enrichment',
+
+// SUPPORT
+'knowledge_base',
+'order_tracking',
+'faq_system',
+'incident_logs',
+'system_diagnostics',
+'ticket_system',
+
+// LEGAL & COMPLIANCE
+'compliance_records',
+'contract_analyzer',
+'compliance_database',
+'legal_templates',
+'risk_assessment',
+'policy_management',
+
+// MARKETING
+'brand_guidelines',
+'campaign_history',
+'customer_avatar',
+'keyword_research',
+'seo_analyzer',
+'content_guidelines',
+'trend_analysis',
+'content_calendar',
+'email_analytics',
+'automation_flows',
+
+// DATA & FINANCE
+'bi_dashboard',
+'data_warehouse',
+'reporting_system',
+'financial_reports',
+'cashflow_dashboard',
+'forecasting_system',
+
+// STRATEGY & RESEARCH
+'market_intelligence',
+'competitor_analysis',
+'trend_monitoring',
+'scenario_planning',
+'business_frameworks',
+
+// HR & EDUCATION
+'candidate_database',
+'resume_parser',
+'interview_frameworks',
+'career_assessment',
+'goal_planning',
+'skills_mapping',
+'employee_handbook',
+'training_platform',
+'task_checklists',
+'learning_tracker',
+'adaptive_assessment',
+'learning_frameworks',
+'training_templates',
+
+// PRODUCT & PROJECTS
+'roadmap_planner',
+'user_feedback',
+'product_analytics',
+'project_tracker',
+'risk_management',
+'task_planning',
+
+// ENGINEERING
+'system_diagrams',
+'architecture_patterns',
+'infrastructure_monitoring',
+'static_analysis',
+'security_scanner',
+'performance_profiler',
+
+// OPERATIONS
+'process_mapping',
+'workflow_analytics',
+'performance_metrics',
+
+// STARTUP & GROWTH
+'startup_playbooks',
+'growth_metrics',
+'fundraising_frameworks',

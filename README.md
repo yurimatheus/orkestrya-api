@@ -193,3 +193,222 @@ Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
 'startup_playbooks',
 'growth_metrics',
 'fundraising_frameworks',
+
+---
+
+# Orkestrya — Arquitetura Mental do Sistema
+
+## Conceito correto da arquitetura da Orkestrya
+
+A Orkestrya não é apenas:
+
+* um chatbot
+* um CRM
+* um wrapper de IA
+* um conjunto de automações
+
+A Orkestrya é:
+
+```txt
+AI Runtime Layer
+```
+
+Uma camada operacional cognitiva onde:
+
+* agentes pensam
+* tools executam
+* workflows coordenam
+* memória contextualiza
+* módulos empresariais alimentam o sistema
+
+---
+
+# Estrutura Mental da Plataforma
+
+```txt
+User
+ ↓
+Agent
+ ↓
+AgentRunner
+ ↓
+LLM
+ ↓
+Tool Call?
+ ↓
+ToolExecutor
+ ↓
+Tool Registry
+ ↓
+Tool
+ ↓
+Service
+ ↓
+Database / API / ERP / CRM / Queue
+```
+
+---
+
+# Conceito correto das camadas
+
+| Camada        | Responsabilidade                        |
+| ------------- | --------------------------------------- |
+| Agent         | personalidade, objetivos, comportamento |
+| AgentRunner   | runtime operacional do agente           |
+| LLM           | raciocínio e geração                    |
+| ToolExecutor  | executa capabilities                    |
+| Tool Registry | catálogo central de tools               |
+| Tool          | capability reutilizável                 |
+| Service       | regra de negócio                        |
+| Module        | domínio empresarial                     |
+| Memory        | contexto persistente                    |
+| Workflow      | coordenação multi-step                  |
+
+---
+
+# O objetivo do AgentRunner
+
+O `AgentRunner` é o kernel cognitivo da Orkestrya.
+
+Ele:
+
+1. recebe o agente
+2. monta contexto
+3. chama a LLM
+4. detecta tool calls
+5. executa tools
+6. devolve resultado
+7. coordena loops de raciocínio
+
+---
+
+# O AgentRunner NÃO conhece
+
+O runner não sabe:
+
+* vendas
+* financeiro
+* jurídico
+* RH
+* CRM
+
+Ele só conhece:
+
+* agentes
+* tools
+* mensagens
+* contexto
+* execução
+
+Isso torna a arquitetura:
+
+* modular
+* escalável
+* reutilizável
+* multi-domínio
+
+---
+
+# O conceito correto de Tool
+
+Tool NÃO é:
+
+```txt
+função aleatória
+```
+
+Tool é:
+
+```txt
+capability operacional
+```
+
+Ela encapsula:
+
+* acesso a dados
+* APIs
+* permissões
+* cache
+* lógica
+* observabilidade
+* segurança
+
+---
+
+# O segredo da arquitetura
+
+A Tool NÃO conhece o Agent.
+
+Mas o Agent conhece a Tool.
+
+Isso permite:
+
+* reutilização massiva
+* desacoplamento
+* escalabilidade extrema
+* múltiplos agentes usando a mesma capability
+
+---
+
+# Evolução natural da Orkestrya
+
+```txt
+Local Tool
+ ↓
+Internal API
+ ↓
+External API
+ ↓
+MCP Server
+ ↓
+Workflow Tool
+ ↓
+Multi-Agent Runtime
+ ↓
+Cognitive Operating Layer
+```
+
+---
+
+# O que a Orkestrya realmente está se tornando
+
+A arquitetura evolui naturalmente para:
+
+```txt
+Sistema Operacional Empresarial Cognitivo
+```
+
+Onde:
+
+* CRM
+* ERP
+* Atendimento
+* Marketing
+* Financeiro
+* RH
+* Jurídico
+* Operações
+
+viram módulos conectados a uma camada inteligente central.
+
+---
+
+# Beleza estrutural do projeto
+
+A beleza da Orkestrya está em:
+
+* separação limpa de responsabilidades
+* capabilities reutilizáveis
+* agentes especializados
+* execução desacoplada
+* contexto persistente
+* coordenação inteligente
+* expansão infinita por domínio
+
+Ela não cresce como um SaaS tradicional.
+
+Ela cresce como:
+
+* um runtime
+* uma infraestrutura cognitiva
+* uma camada operacional inteligente universal.

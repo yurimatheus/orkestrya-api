@@ -1,5 +1,5 @@
 import { Body, Controller, Post, Res } from '@nestjs/common';
-import type { Response } from 'express';
+import { FastifyReply } from '@nestjs/platform-fastify';
 import { ChatService } from './chat.service';
 
 class StreamMessageDto {
@@ -12,7 +12,7 @@ export class ChatController {
   constructor(private chatService: ChatService) {}
 
   @Post('stream')
-  stream(@Body() body: StreamMessageDto, @Res() res: Response) {
+  stream(@Body() body: StreamMessageDto, @Res() res: FastifyReply) {
     return this.chatService.streamMessage(body.agentSlug, body.message, res);
   }
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import type { Response } from 'express';
+import { FastifyReply } from '@nestjs/platform-fastify';
 import OpenAI from 'openai';
 import { AgentsService } from '../agents/agents.service';
 
@@ -12,13 +12,13 @@ export class ChatService {
 
   constructor(private agentsService: AgentsService) {}
 
-  async streamMessage(agentSlug: string, message: string, res: Response) {
+  async streamMessage(agentSlug: string, message: string, res: FastifyReply) {
     const agent = this.agentsService.findOne(agentSlug);
 
-    res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache');
-    res.setHeader('Connection', 'keep-alive');
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.header('Content-Type', 'text/event-stream');
+    res.header('Cache-Control', 'no-cache');
+    res.header('Connection', 'keep-alive');
+    res.header('Access-Control-Allow-Origin', '*');
 
     const send = (data: object) => res.write(`data: ${JSON.stringify(data)}\n\n`);
 

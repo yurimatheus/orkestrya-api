@@ -1,10 +1,10 @@
 import { Body, Controller, Post, Res } from '@nestjs/common';
-import { FastifyReply } from '@nestjs/platform-fastify';
 import { ChatService } from './chat.service';
+import type { FastifyReply } from 'fastify';
 
 class StreamMessageDto {
-  agentSlug: string;
-  message: string;
+  agentSlug!: string;
+  message!: string;
 }
 
 @Controller('chat')

@@ -21,7 +21,6 @@ O Orkestrya é um sistema que transforma um simples chat em uma arquitetura ente
 
 ### Diagrama de Fluxo
 
-```
 ┌─────────────────────────────────────────────────────────────┐
 │                     Frontend / Cliente                       │
 └────────────────────────┬────────────────────────────────────┘
@@ -67,11 +66,9 @@ O Orkestrya é um sistema que transforma um simples chat em uma arquitetura ente
         │   OpenRouter API     │
         │  (LLM Provider)      │
         └──────────────────────┘
-```
 
 ### Estrutura de Módulos NestJS
 
-```
 AppModule
 ├── ChatModule
 │   ├── ChatController
@@ -97,13 +94,11 @@ AppModule
         ├── CrmInsightsTool
         ├── CrmInsightsService
         └── ToolRegistryBootstrap
-```
 
 ---
 
 ## 📂 Estrutura de Diretórios
 
-```
 src/
 ├── agents/                      # ★ Definições e orquestração de agentes
 │   ├── agents.module.ts
@@ -144,7 +139,6 @@ src/
 ├── app.controller.ts            # GET / (health check)
 ├── app.service.ts
 └── main.ts                      # Entry point, bootstrap
-```
 
 ---
 
@@ -152,13 +146,11 @@ src/
 
 ### 1️⃣ Cliente envia mensagem
 
-```
 POST /chat/stream
 {
   "agentSlug": "consultor-vendas",
   "message": "Como faço para aumentar minhas vendas?"
 }
-```
 
 ### 2️⃣ ChatService configura SSE
 
@@ -168,7 +160,7 @@ POST /chat/stream
 
 ### 3️⃣ AgentRunner Orquestra o Fluxo
 
-```typescript
+typescript
 // Carrega agente
 const agent = agentsService.findOne('consultor-vendas');
 
@@ -194,7 +186,6 @@ onDone({
   response: { content, tokenCount, characterCount },
   metadata: { temperature, maxTokens, timestamp }
 });
-```
 
 ### 4️⃣ LlmService Faz Parsing Robusto
 
@@ -207,7 +198,6 @@ onDone({
 
 ### 5️⃣ Cliente Recebe SSE Events
 
-```
 data: { "type": "token", "content": "Olá, " }
 data: { "type": "token", "content": "eu" }
 data: { "type": "token", "content": " " }
@@ -215,7 +205,6 @@ data: { "type": "token", "content": "posso" }
 ...
 data: { "type": "done", "data": { "agent": {...}, "response": {...} } }
 data: { "type": "end" }
-```
 
 ---
 
@@ -225,14 +214,14 @@ data: { "type": "end" }
 
 **Responsabilidade:** Orquestra o fluxo cognitivo completo.
 
-```typescript
+typescript
 // Fluxo interno
 1. Carrega definição do agente
 2. Constrói prompt via PromptBuilder
 3. Chama LlmService com callbacks
 4. Agrega resposta via ResponseAggregator
 5. Retorna resultado final
-```
+
 
 **Características:**
 - Tratamento de erro com fallback
@@ -262,7 +251,7 @@ data: { "type": "end" }
 **Responsabilidade:** Agrega tokens, metadados e coordena resposta final.
 
 **API:**
-```typescript
+typescript
 addToken(token)           // Agrega um token
 addTokenBatch(tokens)     // Agrega múltiplos
 addError(error)           // Registra erro
@@ -276,7 +265,6 @@ getTokenCount()           // Contagem de tokens
 getCharacterCount()       // Contagem de chars
 hasErrors()               // Validação
 hasToolCalls()            // Validação
-```
 
 ---
 
@@ -300,18 +288,17 @@ O sistema vem com **30+ agentes pré-definidos** em múltiplas categorias (Venda
 
 ### Iniciar a aplicação
 
-```bash
+bash
 # Desenvolvimento com watch
 npm run start:dev
 
 # Produção
 npm run build
 npm run start:prod
-```
 
 ### Endpoints principais
 
-```bash
+bash
 # Ver todos os agentes
 GET /agents
 
@@ -326,11 +313,10 @@ Content-Type: application/json
   "agentSlug": "consultor-vendas",
   "message": "Qual é a melhor forma de aumentar vendas?"
 }
-```
 
 ### Exemplo com JavaScript/Fetch
 
-```javascript
+javascript
 const response = await fetch('http://localhost:3000/chat/stream', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
@@ -364,7 +350,6 @@ while (true) {
     }
   }
 }
-```
 
 ---
 
@@ -385,7 +370,7 @@ Criar definição em `src/agents/definitions/index.ts` e registrar em `ALL_AGENT
 
 ## 📚 Testes
 
-```bash
+bash
 # Unit tests
 npm run test
 
@@ -397,7 +382,6 @@ npm run test:cov
 
 # E2E
 npm run test:e2e
-```
 
 ---
 
@@ -427,10 +411,10 @@ A Orkestrya não é apenas um chatbot - é uma **camada operacional cognitiva** 
 - Workflows coordenam processos multi-step
 
 **Evolução Natural:**
-```
+
 Local Tool → Internal API → External API → MCP Server 
 → Workflow Tool → Multi-Agent Runtime → Cognitive OS
-```
+
 
 ---
 
@@ -553,15 +537,14 @@ Quando uma ferramenta estiver pronta, siga os passos:
 
 1. **Criar arquivo da ferramenta:**
 
-```bash
+bash
 mkdir -p src/tools/minha-nova-tool
 touch src/tools/minha-nova-tool/minha-nova-tool.service.ts
 touch src/tools/minha-nova-tool/minha-nova-tool.tool.ts
-```
 
 2. **Implementar a ferramenta:**
 
-```typescript
+typescript
 // minha-nova-tool.tool.ts
 @Injectable()
 export class MinhaNovaToolTool implements Tool {
@@ -581,10 +564,9 @@ export class MinhaNovaToolTool implements Tool {
   }
 }
 
-```
 3. **Registrar em ToolsModule:**
 
-```typescript
+typescript
 @Module({
   providers: [
     CrmInsightsService,
@@ -600,11 +582,10 @@ export class MinhaNovaToolTool implements Tool {
   ],
 })
 export class ToolsModule {}
-```
 
 1. **Registrar em ToolRegistryBootstrap:**
 
-```typescript
+typescript
 @Injectable()
 export class ToolRegistryBootstrap implements OnModuleInit {
   constructor(
@@ -618,15 +599,13 @@ export class ToolRegistryBootstrap implements OnModuleInit {
     this.toolRegistry.register(this.minhaNovaToolTool);     // ← Registrar
   }
 }
-```
 
 2. **Usar em agentes:**
-```typescript
+typescript
 tools: [
   'crm_insights',
   'minha_nova_tool',  // ← Agora disponível
 ],
-```
 
 ---
 

@@ -1,13 +1,29 @@
-import { TOOL_REGISTRY } from './tool-registry';
+import { Injectable, BadRequestException } from '@nestjs/common';
+import { ToolRegistry } from './tool-registry';
 
+@Injectable()
 export class ToolExecutor {
-  static async execute(name: string, input: any, context?: any) {
-    const tool = TOOL_REGISTRY[name];
+  constructor(private readonly toolRegistry: ToolRegistry) {}
+
+  async execute(
+    toolName: string,
+    input: any,
+    context?: any,
+  ): Promise<any> {
+    const tool = this.toolRegistry.get(toolName);
 
     if (!tool) {
-      throw new Error(`Tool not found: ${name}`);
+      throw new BadRequestException(
+        `Tool "${toolName}" not found in registry`,
+      );
     }
 
-    return tool.execute(input, context);
+    try {
+      return await tool.execute(input, context);
+    } catch (error) {
+      throw new BadRequestException(
+        `Tool "${toolName}" execution failed: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
   }
 }

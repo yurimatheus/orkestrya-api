@@ -14,18 +14,27 @@ export class ChatService {
     message: string,
     res: FastifyReply,
   ) {
-    res.header('Content-Type', 'text/event-stream');
-    res.header('Cache-Control', 'no-cache');
-    res.header('Connection', 'keep-alive');
-    res.header('Access-Control-Allow-Origin', '*');
-
-    const send = (data: object) => {
-      res.raw.write(
-        `data: ${JSON.stringify(data)}\n\n`,
-      );
-    };
-
     try {
+      // Setup SSE headers
+      res.header('Content-Type', 'text/event-stream');
+      res.header('Cache-Control', 'no-cache');
+      res.header('Connection', 'keep-alive');
+      res.header('Access-Control-Allow-Origin', '*');
+
+      // Flush headers immediately
+      res.raw.flushHeaders();
+
+      const send = (data: object) => {
+        try {
+          res.raw.write(
+            `data: ${JSON.stringify(data)}\n\n`,
+          );
+        } catch (err) {
+          console.error('Error writing to SSE stream:', err);
+        }
+      };
+
+      // Run the agent with streaming callbacks
       await this.agentRunner.run({
         agentSlug,
         input: message,
@@ -37,25 +46,46 @@ export class ChatService {
           });
         },
 
+        onError(error: string) {
+          send({
+            type: 'error',
+            content: error,
+          });
+        },
+
         onDone(data: any) {
           send({
             type: 'done',
             data,
           });
+
+          // End the connection
+          send({ type: 'end' });
+          res.raw.end();
         },
       });
     } catch (error) {
-      send({
-        type: 'error',
-        content:
-          error instanceof Error
-            ? error.message
-            : 'Unexpected error',
-      });
-    } finally {
-      send({
-        type: 'end',
-      });
+      const errorMessage = error instanceof Error
+        ? error.message
+        : 'Unexpected error';
+
+      try {
+        res.raw.write(
+          `data: ${JSON.stringify({
+            type: 'error',
+            content: errorMessage,
+          })}\n\n`,
+        );
+      } catch (err) {
+        // Connection may already be closed
+        console.error('Error sending error message:', err);
+      }
+
+      try {
+        res.raw.end();
+      } catch (err) {
+        console.error('Error closing response:', err);
+      }
     }
   }
 }

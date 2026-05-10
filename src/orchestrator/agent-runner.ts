@@ -1,51 +1,92 @@
-import { Injectable } from '@nestjs/common';
-
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { AgentsService } from '../agents/agents.service';
 import { LlmService } from '../llm/llm.service';
+import { ToolExecutor } from './tool-executor';
+import { PromptBuilder } from './prompt-builder';
+import { ResponseAggregator } from './response-aggregator';
+
+export interface AgentRunnerInput {
+  agentSlug: string;
+  input: string;
+  onToken: (token: string) => void;
+  onDone: (result: any) => void;
+  onError?: (error: string) => void;
+}
 
 @Injectable()
 export class AgentRunner {
   constructor(
     private readonly agentsService: AgentsService,
     private readonly llmService: LlmService,
+    private readonly toolExecutor: ToolExecutor,
+    private readonly promptBuilder: PromptBuilder,
+    private readonly responseAggregator: ResponseAggregator,
   ) {}
 
-  async run({
-    agentSlug,
-    input,
-    onToken,
-    onDone,
-  }: any) {
-    const agent =
-      this.agentsService.findOne(agentSlug);
+  async run(input: AgentRunnerInput) {
+    this.responseAggregator.reset();
 
-    const messages = [
-      {
-        role: 'system',
-        content:
-          agent.prompts?.system,
-      },
+    try {
+      const agent = this.agentsService.findOne(input.agentSlug);
 
-      {
-        role: 'user',
-        content: input,
-      },
-    ];
+      // Build consistent prompt
+      const messages = this.promptBuilder.buildMessages(agent, input.input);
 
-    await this.llmService.stream({
-      model: agent.model.name,
-      temperature:
-        agent.model.temperature,
-      maxTokens:
-        agent.model.maxTokens,
+      // Stream from LLM
+      await this.llmService.stream({
+        model: agent.model.name,
+        messages,
+        temperature: agent.model.temperature ?? 0.7,
+        max_tokens: agent.model.maxTokens ?? 1000,
+        onToken: (token: string) => {
+          this.responseAggregator.addToken(token);
+          input.onToken(token);
+        },
+        onStart: () => {
+          // Could emit start event
+        },
+        onEnd: () => {
+          // Could emit end event
+        },
+        onError: (error: string) => {
+          this.responseAggregator.addError(error);
+          input.onError?.(error);
+        },
+      });
 
-      messages,
+      // Aggregate final response
+      const response = this.responseAggregator.getResponse();
 
-      onToken,
-    });
+      input.onDone({
+        agent: {
+          slug: agent.slug,
+          name: agent.identity.name,
+        },
+        response: {
+          content: response.content,
+          tokenCount: response.tokens.length,
+          characterCount: response.content.length,
+        },
+        metadata: {
+          temperature: agent.model.temperature,
+          maxTokens: agent.model.maxTokens,
+          timestamp: new Date().toISOString(),
+        },
+      });
+    } catch (error) {
+      const errorMessage =
+        error instanceof NotFoundException
+          ? `Agent "${input.agentSlug}" not found`
+          : error instanceof Error
+            ? error.message
+            : 'Unknown error';
 
-    onDone({
-      agent: agent.identity.name,
-    });
+      input.onError?.(errorMessage);
+
+      input.onDone({
+        error: errorMessage,
+        status: 'failed',
+      });
+    }
   }
 }

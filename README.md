@@ -1,414 +1,633 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 🤖 Orkestrya Agent API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Uma plataforma modular escalável baseada em arquitetura de **runtime cognitivo** com agentes de IA, orchestration e streaming em tempo real.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 🎯 Visão Geral
 
-## Description
+O Orkestrya é um sistema que transforma um simples chat em uma arquitetura enterprise-ready de **agentes autônomos** com:
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- ✅ **Runtime cognitivo** robusto com fluxo de execução consistente
+- ✅ **Streaming SSE** em tempo real com agregação de resposta
+- ✅ **System de tools** desacoplado e extensível
+- ✅ **Injeção de dependências** corrigida e modular
+- ✅ **Múltiplos agentes** com definições independentes
+- ✅ **Suporte para múltiplos providers LLM** (OpenRouter)
+- ✅ **Prompt builder** que consolida system, rules e constraints
+- ✅ **Tratamento de erro** robusto com fallbacks
 
-## Project setup
+---
+
+## 🏗️ Arquitetura
+
+### Diagrama de Fluxo
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                     Frontend / Cliente                       │
+└────────────────────────┬────────────────────────────────────┘
+                         │
+                         ▼
+            ┌─────────────────────────────┐
+            │    ChatController           │
+            │  (POST /chat/stream)        │
+            └────────┬────────────────────┘
+                     │
+                     ▼
+            ┌─────────────────────────────┐
+            │     ChatService             │
+            │  (SSE Transport)            │
+            │  - flushHeaders()           │
+            │  - Error handling           │
+            │  - Graceful shutdown        │
+            └────────┬────────────────────┘
+                     │
+                     ▼
+        ┌────────────────────────────────────┐
+        │      AgentRunner (Runtime)         │
+        │  - Orquestra fluxo cognitivo      │
+        │  - Agregação de resposta          │
+        │  - Tool resolution                │
+        └────────┬─────────────┬─────────────┘
+                 │             │
+        ┌────────▼──┐   ┌──────▼────────┐
+        │PromptBuild│   │ResponseAggr. │
+        │ (Prompt)  │   │ (Tokens)      │
+        └────────┬──┘   └───────────────┘
+                 │
+        ┌────────▼──────────────┐
+        │   LlmService          │
+        │ (Provider Adapter)    │
+        │  - stream parsing     │
+        │  - error handling     │
+        │  - chunk buffering    │
+        └────────┬──────────────┘
+                 │
+                 ▼
+        ┌──────────────────────┐
+        │   OpenRouter API     │
+        │  (LLM Provider)      │
+        └──────────────────────┘
+```
+
+### Estrutura de Módulos NestJS
+
+```
+AppModule
+├── ChatModule
+│   ├── ChatController
+│   └── ChatService
+│       └── (deps) AgentRunner
+│
+├── AgentsModule
+│   ├── AgentsService
+│   ├── AgentsController
+│   └── definitions/
+│       └── [30+ Agent Definitions]
+│
+└── OrchestratorModule (Core)
+    ├── AgentRunner (★ Orquestra fluxo cognitivo)
+    ├── PromptBuilder (★ Constrói prompts robusto)
+    ├── ResponseAggregator (★ Agrega tokens)
+    ├── ToolExecutor (★ Executa tools)
+    ├── ToolRegistry (★ Registro de ferramentas)
+    ├── LlmModule
+    │   └── LlmService (Adapter OpenRouter)
+    │
+    └── ToolsModule
+        ├── CrmInsightsTool
+        ├── CrmInsightsService
+        └── ToolRegistryBootstrap
+```
+
+---
+
+## 📂 Estrutura de Diretórios
+
+```
+src/
+├── agents/                      # ★ Definições e orquestração de agentes
+│   ├── agents.module.ts
+│   ├── agents.service.ts        # Lookup e busca de agentes
+│   ├── agents.controller.ts     # GET /agents, /agents/:slug
+│   ├── agent.definition.ts      # Interface de definição de agente
+│   └── definitions/
+│       ├── index.ts             # 30+ agentes pré-definidos
+│       └── [individual agents]
+│
+├── chat/                        # ★ Transporte HTTP/SSE
+│   ├── chat.module.ts
+│   ├── chat.controller.ts       # POST /chat/stream
+│   └── chat.service.ts          # Streaming SSE com flushHeaders
+│
+├── orchestrator/                # ★★★ Core Runtime Cognitivo
+│   ├── orchestrator.module.ts
+│   ├── agent-runner.ts          # ★ Orquestra fluxo: prompt → LLM → resposta
+│   ├── prompt-builder.ts        # ★ Consolida system, rules, constraints
+│   ├── response-aggregator.ts   # ★ Agrega tokens e metadados
+│   ├── tool-executor.ts         # Executa tools via registry
+│   ├── tool-registry.ts         # ★ Map de tools disponíveis
+│   └── tool-registry-bootstrap.ts
+│
+├── llm/                         # ★ Provider Adapter (OpenRouter)
+│   ├── llm.module.ts
+│   └── llm.service.ts           # Parsing SSE robusto, chunk buffering
+│
+├── tools/                       # ★ Sistema de capabilities
+│   ├── tools.module.ts
+│   └── crm_insights/
+│       ├── crm-insights.tool.ts     # Tool interface
+│       ├── crm-insights.service.ts
+│       ├── crm-insights.types.ts
+│       └── index.ts
+│
+├── app.module.ts                # Root module
+├── app.controller.ts            # GET / (health check)
+├── app.service.ts
+└── main.ts                      # Entry point, bootstrap
+```
+
+---
+
+## 🚀 Fluxo de Execução (Cognitive Runtime)
+
+### 1️⃣ Cliente envia mensagem
+
+```
+POST /chat/stream
+{
+  "agentSlug": "consultor-vendas",
+  "message": "Como faço para aumentar minhas vendas?"
+}
+```
+
+### 2️⃣ ChatService configura SSE
+
+- Define headers: `Content-Type: text/event-stream`
+- Chama `res.raw.flushHeaders()` para iniciar streaming imediato
+- Passa callbacks para `AgentRunner`
+
+### 3️⃣ AgentRunner Orquestra o Fluxo
+
+```typescript
+// Carrega agente
+const agent = agentsService.findOne('consultor-vendas');
+
+// Constrói prompt robusto
+const messages = promptBuilder.buildMessages(agent, userInput);
+// Resultado:
+// - System: identidade + tom + regras + constraints
+// - User: input do usuário
+
+// Chama LLM com streaming
+await llmService.stream({
+  model: agent.model.name,
+  messages,
+  onToken: (token) => {
+    responseAggregator.addToken(token);    // Agrega
+    chatService.send({ type: 'token', content: token }); // Streamea
+  }
+});
+
+// Finaliza com resposta agregada
+onDone({
+  agent: { slug, name },
+  response: { content, tokenCount, characterCount },
+  metadata: { temperature, maxTokens, timestamp }
+});
+```
+
+### 4️⃣ LlmService Faz Parsing Robusto
+
+- Conecta a OpenRouter
+- Valida `response.ok`
+- Faz buffer de chunks incompletos
+- Parse line-by-line SSE
+- Extrai tokens com segurança
+- Trata erros sem quebrar stream
+
+### 5️⃣ Cliente Recebe SSE Events
+
+```
+data: { "type": "token", "content": "Olá, " }
+data: { "type": "token", "content": "eu" }
+data: { "type": "token", "content": " " }
+data: { "type": "token", "content": "posso" }
+...
+data: { "type": "done", "data": { "agent": {...}, "response": {...} } }
+data: { "type": "end" }
+```
+
+---
+
+## 📋 Componentes Principais
+
+### 🤖 AgentRunner
+
+**Responsabilidade:** Orquestra o fluxo cognitivo completo.
+
+```typescript
+// Fluxo interno
+1. Carrega definição do agente
+2. Constrói prompt via PromptBuilder
+3. Chama LlmService com callbacks
+4. Agrega resposta via ResponseAggregator
+5. Retorna resultado final
+```
+
+**Características:**
+- Tratamento de erro com fallback
+- Metadados estruturados
+- Pronto para multi-agent concorrente
+
+---
+
+### 📝 PromptBuilder
+
+**Responsabilidade:** Consolida um prompt robusto a partir da definição do agente.
+
+**Inclui automaticamente:**
+- Identidade do agente
+- Role e descrição
+- System prompt base
+- Objetivos do agente
+- Regras de comportamento
+- Tone e estilo
+- Instruções específicas
+- Constraints
+
+---
+
+### 📊 ResponseAggregator
+
+**Responsabilidade:** Agrega tokens, metadados e coordena resposta final.
+
+**API:**
+```typescript
+addToken(token)           // Agrega um token
+addTokenBatch(tokens)     // Agrega múltiplos
+addError(error)           // Registra erro
+addToolCall(name, input)  // Registra call de tool
+setFinishReason(reason)   // Motivo de finalização
+setMetadata(key, value)   // Metadados customizados
+
+getResponse()             // Resposta completa
+getContent()              // Conteúdo final
+getTokenCount()           // Contagem de tokens
+getCharacterCount()       // Contagem de chars
+hasErrors()               // Validação
+hasToolCalls()            // Validação
+```
+
+---
+
+### 🛠️ ToolExecutor & ToolRegistry
+
+**Responsabilidade:** Sistema desacoplado e extensível de ferramentas.
+
+**ToolRegistry:** Mapa dinâmico de tools disponíveis
+
+**ToolExecutor:** Executa com validação
+
+---
+
+## 🤖 Agentes Disponíveis
+
+O sistema vem com **30+ agentes pré-definidos** em múltiplas categorias (Vendas, Suporte, Marketing, Financeiro, RH, Jurídico, Tech, Estratégia).
+
+---
+
+## 🔧 Como Usar
+
+### Iniciar a aplicação
 
 ```bash
-$ npm install
+# Desenvolvimento com watch
+npm run start:dev
+
+# Produção
+npm run build
+npm run start:prod
 ```
 
-## Compile and run the project
+### Endpoints principais
 
 ```bash
-# development
-$ npm run start
+# Ver todos os agentes
+GET /agents
 
-# watch mode
-$ npm run start:dev
+# Buscar um agente específico
+GET /agents/consultor-vendas
 
-# production mode
-$ npm run start:prod
+# Iniciar chat com streaming SSE
+POST /chat/stream
+Content-Type: application/json
+
+{
+  "agentSlug": "consultor-vendas",
+  "message": "Qual é a melhor forma de aumentar vendas?"
+}
 ```
 
-## Run tests
+### Exemplo com JavaScript/Fetch
+
+```javascript
+const response = await fetch('http://localhost:3000/chat/stream', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    agentSlug: 'consultor-vendas',
+    message: 'Como aumentar vendas?'
+  })
+});
+
+const reader = response.body.getReader();
+const decoder = new TextDecoder();
+
+while (true) {
+  const { done, value } = await reader.read();
+  if (done) break;
+
+  const chunk = decoder.decode(value);
+  const lines = chunk.split('\n');
+  
+  for (const line of lines) {
+    if (line.startsWith('data: ')) {
+      const event = JSON.parse(line.slice(6));
+      
+      if (event.type === 'token') {
+        console.log(event.content);
+      } else if (event.type === 'done') {
+        console.log('Agente:', event.data.agent.name);
+      } else if (event.type === 'end') {
+        console.log('Finalizado');
+      }
+    }
+  }
+}
+```
+
+---
+
+## 🛠️ Como Adicionar Novos Agentes
+
+Criar definição em `src/agents/definitions/index.ts` e registrar em `ALL_AGENTS`.
+
+---
+
+## 🛠️ Como Adicionar Novas Tools
+
+1. Criar a ferramenta em `src/tools/minha-tool/`
+2. Implementar interface `Tool`
+3. Registrar em `src/orchestrator/tool-registry-bootstrap.ts`
+4. Usar em agentes via `tools` array
+
+---
+
+## 📚 Testes
 
 ```bash
-# unit tests
-$ npm run test
+# Unit tests
+npm run test
 
-# e2e tests
-$ npm run test:e2e
+# Watch mode
+npm run test:watch
 
-# test coverage
-$ npm run test:cov
+# Coverage
+npm run test:cov
+
+# E2E
+npm run test:e2e
 ```
 
-## Deployment
+---
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+## 🚨 Tratamento de Erros
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+- Cada serviço valida e trata seus erros
+- Recuperação graceful em SSE
+- Eventos de erro sem quebrar stream
+
+---
+
+## 📄 Licença
+
+UNLICENSED
+
+---
+
+## 🏛️ Filosofia da Arquitetura
+
+A Orkestrya não é apenas um chatbot - é uma **camada operacional cognitiva** onde:
+
+- Agentes pensam com especialização
+- Tools executam capabilities reutilizáveis
+- Runtime coordena fluxo de execução
+- Módulos empresariais alimentam o sistema
+- Memória contextualiza interações
+- Workflows coordenam processos multi-step
+
+**Evolução Natural:**
+```
+Local Tool → Internal API → External API → MCP Server 
+→ Workflow Tool → Multi-Agent Runtime → Cognitive OS
+```
+
+---
+
+## 🔮 Tools Roadmap (Em Breve)
+
+Ferramentas planejadas organizadas por domínio:
+
+### 📊 SALES & E-COMMERCE
+
+- `customer_history` - Histórico completo do cliente
+- `product_catalog` - Catálogo de produtos
+- `crm_insights` - ⭐ Insights comerciais (implementada)
+- `cart_data` - Dados de carrinho
+- `pricing_rules` - Regras de preço dinâmicas
+- `lead_database` - Base de leads qualificados
+- `company_enrichment` - Enriquecimento de dados de empresa
+
+### 💬 SUPPORT & CUSTOMER SERVICE
+
+- `knowledge_base` - Base de conhecimento
+- `order_tracking` - Rastreamento de pedidos
+- `faq_system` - Sistema de FAQ
+- `incident_logs` - Logs de incidentes
+- `system_diagnostics` - Diagnósticos de sistema
+- `ticket_system` - Sistema de tickets
+
+### ⚖️ LEGAL & COMPLIANCE
+
+- `compliance_records` - Registros de compliance
+- `contract_analyzer` - Analisador de contratos
+- `compliance_database` - Base de compliance
+- `legal_templates` - Templates legais
+- `risk_assessment` - Avaliação de riscos
+- `policy_management` - Gestão de políticas
+
+### 📢 MARKETING & CONTENT
+
+- `brand_guidelines` - Guia de marca
+- `campaign_history` - Histórico de campanhas
+- `customer_avatar` - Avatar do cliente
+- `keyword_research` - Pesquisa de keywords
+- `seo_analyzer` - Analisador SEO
+- `content_guidelines` - Guia de conteúdo
+- `trend_analysis` - Análise de trends
+- `content_calendar` - Calendário editorial
+- `email_analytics` - Analytics de email
+- `automation_flows` - Fluxos de automação
+
+### 💰 DATA & FINANCE
+
+- `bi_dashboard` - Dashboard BI
+- `data_warehouse` - Data warehouse
+- `reporting_system` - Sistema de relatórios
+- `financial_reports` - Relatórios financeiros
+- `cashflow_dashboard` - Dashboard de fluxo de caixa
+- `forecasting_system` - Sistema de previsão
+
+### 🔍 STRATEGY & RESEARCH
+
+- `market_intelligence` - Inteligência de mercado
+- `competitor_analysis` - Análise de competidores
+- `trend_monitoring` - Monitoramento de trends
+- `scenario_planning` - Planejamento de cenários
+- `business_frameworks` - Frameworks de negócio
+
+### 👥 HR & TALENT
+
+- `candidate_database` - Base de candidatos
+- `resume_parser` - Parser de currículo
+- `interview_frameworks` - Frameworks de entrevista
+- `career_assessment` - Avaliação de carreira
+- `goal_planning` - Planejamento de objetivos
+- `skills_mapping` - Mapeamento de skills
+- `employee_handbook` - Manual do colaborador
+- `training_platform` - Plataforma de treinamento
+
+### 🎓 EDUCATION & LEARNING
+
+- `task_checklists` - Checklists de tarefas
+- `learning_tracker` - Rastreador de aprendizado
+- `adaptive_assessment` - Avaliação adaptativa
+- `learning_frameworks` - Frameworks de aprendizado
+- `training_templates` - Templates de treinamento
+
+### 🚀 PRODUCT & PROJECT MANAGEMENT
+
+- `roadmap_planner` - Planejador de roadmap
+- `user_feedback` - Feedback de usuários
+- `product_analytics` - Analytics de produto
+- `project_tracker` - Rastreador de projetos
+- `risk_management` - Gestão de riscos
+- `task_planning` - Planejamento de tarefas
+
+### 🏗️ ENGINEERING & INFRASTRUCTURE
+
+- `system_diagrams` - Diagramas de sistema
+- `architecture_patterns` - Padrões de arquitetura
+- `infrastructure_monitoring` - Monitoramento de infraestrutura
+- `static_analysis` - Análise estática
+- `security_scanner` - Scanner de segurança
+- `performance_profiler` - Perfilador de performance
+
+### ⚙️ OPERATIONS & PROCESSES
+
+- `process_mapping` - Mapeamento de processos
+- `workflow_analytics` - Analytics de workflow
+- `performance_metrics` - Métricas de performance
+
+### 🚀 STARTUP & GROWTH
+
+- `startup_playbooks` - Playbooks de startup
+- `growth_metrics` - Métricas de growth
+- `fundraising_frameworks` - Frameworks de fundraising
+
+---
+
+## 📝 Como Registrar uma Nova Tool
+
+Quando uma ferramenta estiver pronta, siga os passos:
+
+1. **Criar arquivo da ferramenta:**
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+mkdir -p src/tools/minha-nova-tool
+touch src/tools/minha-nova-tool/minha-nova-tool.service.ts
+touch src/tools/minha-nova-tool/minha-nova-tool.tool.ts
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+2. **Implementar a ferramenta:**
 
-## Resources
+```typescript
+// minha-nova-tool.tool.ts
+@Injectable()
+export class MinhaNovaToolTool implements Tool {
+  name = 'minha_nova_tool';
+  description = 'Descrição da ferramenta';
+  
+  inputSchema = z.object({
+    param1: z.string(),
+    param2: z.number(),
+  });
+  
+  constructor(private readonly service: MinhaNovaToolService) {}
+  
+  async execute(input: any): Promise<any> {
+    const validated = this.inputSchema.parse(input);
+    return this.service.execute(validated);
+  }
+}
 
-Check out a few resources that may come in handy when working with NestJS:
+```
+3. **Registrar em ToolsModule:**
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
-
----
-
-## Tools Registry from Orkestrya
-
-// SALES
-'customer_history',
-'product_catalog',
-'crm_insights',
-'cart_data',
-'pricing_rules',
-'lead_database',
-'company_enrichment',
-
-// SUPPORT
-'knowledge_base',
-'order_tracking',
-'faq_system',
-'incident_logs',
-'system_diagnostics',
-'ticket_system',
-
-// LEGAL & COMPLIANCE
-'compliance_records',
-'contract_analyzer',
-'compliance_database',
-'legal_templates',
-'risk_assessment',
-'policy_management',
-
-// MARKETING
-'brand_guidelines',
-'campaign_history',
-'customer_avatar',
-'keyword_research',
-'seo_analyzer',
-'content_guidelines',
-'trend_analysis',
-'content_calendar',
-'email_analytics',
-'automation_flows',
-
-// DATA & FINANCE
-'bi_dashboard',
-'data_warehouse',
-'reporting_system',
-'financial_reports',
-'cashflow_dashboard',
-'forecasting_system',
-
-// STRATEGY & RESEARCH
-'market_intelligence',
-'competitor_analysis',
-'trend_monitoring',
-'scenario_planning',
-'business_frameworks',
-
-// HR & EDUCATION
-'candidate_database',
-'resume_parser',
-'interview_frameworks',
-'career_assessment',
-'goal_planning',
-'skills_mapping',
-'employee_handbook',
-'training_platform',
-'task_checklists',
-'learning_tracker',
-'adaptive_assessment',
-'learning_frameworks',
-'training_templates',
-
-// PRODUCT & PROJECTS
-'roadmap_planner',
-'user_feedback',
-'product_analytics',
-'project_tracker',
-'risk_management',
-'task_planning',
-
-// ENGINEERING
-'system_diagrams',
-'architecture_patterns',
-'infrastructure_monitoring',
-'static_analysis',
-'security_scanner',
-'performance_profiler',
-
-// OPERATIONS
-'process_mapping',
-'workflow_analytics',
-'performance_metrics',
-
-// STARTUP & GROWTH
-'startup_playbooks',
-'growth_metrics',
-'fundraising_frameworks',
-
----
-
-# Orkestrya — Arquitetura Mental do Sistema
-
-## Conceito correto da arquitetura da Orkestrya
-
-A Orkestrya não é apenas:
-
-* um chatbot
-* um CRM
-* um wrapper de IA
-* um conjunto de automações
-
-A Orkestrya é:
-
-```txt
-AI Runtime Layer
+```typescript
+@Module({
+  providers: [
+    CrmInsightsService,
+    CrmInsightsTool,
+    MinhaNovaToolService,      // ← Adicionar
+    MinhaNovaToolTool,          // ← Adicionar
+  ],
+  exports: [
+    CrmInsightsService,
+    CrmInsightsTool,
+    MinhaNovaToolService,       // ← Adicionar
+    MinhaNovaToolTool,          // ← Adicionar
+  ],
+})
+export class ToolsModule {}
 ```
 
-Uma camada operacional cognitiva onde:
+1. **Registrar em ToolRegistryBootstrap:**
 
-* agentes pensam
-* tools executam
-* workflows coordenam
-* memória contextualiza
-* módulos empresariais alimentam o sistema
+```typescript
+@Injectable()
+export class ToolRegistryBootstrap implements OnModuleInit {
+  constructor(
+    private readonly toolRegistry: ToolRegistry,
+    private readonly crmInsightsTool: CrmInsightsTool,
+    private readonly minhaNovaToolTool: MinhaNovaToolTool,  // ← Adicionar
+  ) {}
 
----
+  onModuleInit() {
+    this.toolRegistry.register(this.crmInsightsTool);
+    this.toolRegistry.register(this.minhaNovaToolTool);     // ← Registrar
+  }
+}
+```
 
-# Estrutura Mental da Plataforma
-
-```txt
-User
- ↓
-Agent
- ↓
-AgentRunner
- ↓
-LLM
- ↓
-Tool Call?
- ↓
-ToolExecutor
- ↓
-Tool Registry
- ↓
-Tool
- ↓
-Service
- ↓
-Database / API / ERP / CRM / Queue
+2. **Usar em agentes:**
+```typescript
+tools: [
+  'crm_insights',
+  'minha_nova_tool',  // ← Agora disponível
+],
 ```
 
 ---
 
-# Conceito correto das camadas
-
-| Camada        | Responsabilidade                        |
-| ------------- | --------------------------------------- |
-| Agent         | personalidade, objetivos, comportamento |
-| AgentRunner   | runtime operacional do agente           |
-| LLM           | raciocínio e geração                    |
-| ToolExecutor  | executa capabilities                    |
-| Tool Registry | catálogo central de tools               |
-| Tool          | capability reutilizável                 |
-| Service       | regra de negócio                        |
-| Module        | domínio empresarial                     |
-| Memory        | contexto persistente                    |
-| Workflow      | coordenação multi-step                  |
-
----
-
-# O objetivo do AgentRunner
-
-O `AgentRunner` é o kernel cognitivo da Orkestrya.
-
-Ele:
-
-1. recebe o agente
-2. monta contexto
-3. chama a LLM
-4. detecta tool calls
-5. executa tools
-6. devolve resultado
-7. coordena loops de raciocínio
-
----
-
-# O AgentRunner NÃO conhece
-
-O runner não sabe:
-
-* vendas
-* financeiro
-* jurídico
-* RH
-* CRM
-
-Ele só conhece:
-
-* agentes
-* tools
-* mensagens
-* contexto
-* execução
-
-Isso torna a arquitetura:
-
-* modular
-* escalável
-* reutilizável
-* multi-domínio
-
----
-
-# O conceito correto de Tool
-
-Tool NÃO é:
-
-```txt
-função aleatória
-```
-
-Tool é:
-
-```txt
-capability operacional
-```
-
-Ela encapsula:
-
-* acesso a dados
-* APIs
-* permissões
-* cache
-* lógica
-* observabilidade
-* segurança
-
----
-
-# O segredo da arquitetura
-
-A Tool NÃO conhece o Agent.
-
-Mas o Agent conhece a Tool.
-
-Isso permite:
-
-* reutilização massiva
-* desacoplamento
-* escalabilidade extrema
-* múltiplos agentes usando a mesma capability
-
----
-
-# Evolução natural da Orkestrya
-
-```txt
-Local Tool
- ↓
-Internal API
- ↓
-External API
- ↓
-MCP Server
- ↓
-Workflow Tool
- ↓
-Multi-Agent Runtime
- ↓
-Cognitive Operating Layer
-```
-
----
-
-# O que a Orkestrya realmente está se tornando
-
-A arquitetura evolui naturalmente para:
-
-```txt
-Sistema Operacional Empresarial Cognitivo
-```
-
-Onde:
-
-* CRM
-* ERP
-* Atendimento
-* Marketing
-* Financeiro
-* RH
-* Jurídico
-* Operações
-
-viram módulos conectados a uma camada inteligente central.
-
----
-
-# Beleza estrutural do projeto
-
-A beleza da Orkestrya está em:
-
-* separação limpa de responsabilidades
-* capabilities reutilizáveis
-* agentes especializados
-* execução desacoplada
-* contexto persistente
-* coordenação inteligente
-* expansão infinita por domínio
-
-Ela não cresce como um SaaS tradicional.
-
-Ela cresce como:
-
-* um runtime
-* uma infraestrutura cognitiva
-* uma camada operacional inteligente universal.
+**Made with ❤️ by Orkestrya Team**

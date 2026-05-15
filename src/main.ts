@@ -23,9 +23,12 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  await app.listen(process.env.PORT ?? 3000);
-  console.log('🚀 Agent API rodando em http://localhost:3000');
-  console.log('📋 Agents disponíveis: GET  http://localhost:3000/agents');
-  console.log('💬 Chat stream:        POST http://localhost:3000/chat/stream');
+  const port = process.env.PORT || 3000;
+
+  await app.listen(port, '0.0.0.0');
+
+  console.log(`🚀 Agent API rodando na porta ${port}`);
+  console.log(`📋 Agents disponíveis: GET /agents`);
+  console.log(`💬 Chat stream:        POST /chat/stream`);
 }
 bootstrap();
